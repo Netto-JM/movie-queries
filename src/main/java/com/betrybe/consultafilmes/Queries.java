@@ -7,6 +7,7 @@ import static java.util.Collections.emptySet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +50,7 @@ public class Queries {
     return movies.stream()
         .filter(movie -> movie.getDirectors().contains(diretor))
         .flatMap(movie -> movie.getActors().stream()).distinct().sorted()
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -64,7 +65,7 @@ public class Queries {
     return movies.stream()
         .filter(movie -> movie.getActors().stream().anyMatch(movie.getDirectors()::contains))
         .sorted(Comparator.comparingInt(Movie::getReleaseYear).reversed()).distinct()
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -75,6 +76,23 @@ public class Queries {
    * conjunto de filmes que se encaixam na categoria da chave correspondente.</p>
    */
   public Map<String, Set<Movie>> moviesReleasedInYearGroupedByCategory(int ano) {
-    return emptyMap(); // TODO: Implementar (bônus).
+    List<Movie> filteredMovies = movies.stream()
+        .filter(movie -> movie.getReleaseYear() == ano)
+        .toList();
+
+    List<String> filteredCategories = filteredMovies.stream()
+        .flatMap(movie -> movie.getCategories().stream()).distinct()
+        .toList();
+
+    Map<String, Set<Movie>> result = new HashMap<>();
+
+    for (String categoty : filteredCategories) {
+      Set<Movie> moviesByCategory = filteredMovies.stream()
+              .filter(movie -> movie.getCategories().contains(categoty))
+                  .collect(Collectors.toSet());
+      result.put(categoty, moviesByCategory);
+    }
+
+    return result;
   }
 }
