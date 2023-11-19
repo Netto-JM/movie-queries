@@ -6,6 +6,7 @@ import static java.util.Collections.emptySet;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +61,10 @@ public class Queries {
    * pelo menos um dos itens do campo `directors` também é um item do campo `atores`.</p>
    */
   public List<Movie> moviesWithAtLeastOneDirectorActedMostRecentFirst() {
-    return emptyList(); // TODO: Implementar.
+    return movies.stream()
+        .filter(movie -> movie.getActors().stream().anyMatch(movie.getDirectors()::contains))
+        .sorted(Comparator.comparingInt(Movie::getReleaseYear).reversed()).distinct()
+        .collect(Collectors.toList());
   }
 
   /**
