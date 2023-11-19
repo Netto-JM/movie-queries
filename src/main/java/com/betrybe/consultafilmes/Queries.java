@@ -31,7 +31,6 @@ public class Queries {
         .flatMap(movie -> movie.getActorsByCharacters().entrySet().stream())
         .filter(entry -> entry.getValue().contains(entry.getKey()))
         .map(Map.Entry::getKey)
-        // .flatMap(Collection::stream)
         .collect(Collectors.toSet());
   }
 
