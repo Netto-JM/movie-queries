@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,8 @@ public class Queries {
   public List<String> actorsThatActedInMoviesOfDirectorInAlphabeticOrder(String diretor) {
     return movies.stream()
         .filter(movie -> movie.getDirectors().contains(diretor))
-        .flatMap(movie -> movie.getActors().stream().sorted())
+        .flatMap(movie -> movie.getActors().stream()).distinct().sorted()
         .collect(Collectors.toList());
-
   }
 
   /**
