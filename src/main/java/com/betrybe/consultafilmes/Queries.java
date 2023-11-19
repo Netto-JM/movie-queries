@@ -76,23 +76,13 @@ public class Queries {
    * conjunto de filmes que se encaixam na categoria da chave correspondente.</p>
    */
   public Map<String, Set<Movie>> moviesReleasedInYearGroupedByCategory(int ano) {
-    List<Movie> filteredMovies = movies.stream()
+    return movies.stream()
         .filter(movie -> movie.getReleaseYear() == ano)
-        .toList();
-
-    List<String> filteredCategories = filteredMovies.stream()
-        .flatMap(movie -> movie.getCategories().stream()).distinct()
-        .toList();
-
-    Map<String, Set<Movie>> result = new HashMap<>();
-
-    for (String categoty : filteredCategories) {
-      Set<Movie> moviesByCategory = filteredMovies.stream()
-              .filter(movie -> movie.getCategories().contains(categoty))
-                  .collect(Collectors.toSet());
-      result.put(categoty, moviesByCategory);
-    }
-
-    return result;
+        .flatMap(movie -> movie.getCategories().stream()
+            .map(category -> Map.entry(category, movie)))
+        .collect(Collectors.groupingBy(
+            Map.Entry::getKey,
+            Collectors.mapping(Map.Entry::getValue, Collectors.toSet())
+        ));
   }
 }
